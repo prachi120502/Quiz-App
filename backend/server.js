@@ -13,6 +13,18 @@ import { createServer } from "http";
 // ✅ Load environment variables before anything else
 dotenv.config();
 
+// Global handlers to catch unexpected errors early during startup
+process.on("unhandledRejection", (reason, promise) => {
+    // Print to console immediately to avoid losing the stack when process exits
+    console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+    console.error("Uncaught Exception:", err && err.stack ? err.stack : err);
+    // Exit with failure after logging to avoid undefined process state
+    process.exit(1);
+});
+
 // ✅ Load the passport Google strategy configuration
 import "./config/passport.js";
 
